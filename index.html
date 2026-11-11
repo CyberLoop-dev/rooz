@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>روز ✦ صفحه شروع</title>
+<style>
+:root{--bg1:#1e1b4b;--bg2:#831843;--bg3:#7c2d12;--glass:rgba(255,255,255,.10);--line:rgba(255,255,255,.18);--txt:#fff7ed;--dim:rgba(255,247,237,.65);--acc:#fb923c}
+*{box-sizing:border-box;margin:0}
+body{min-height:100vh;font-family:Vazirmatn,Tahoma,"Segoe UI",system-ui,sans-serif;color:var(--txt);background:linear-gradient(135deg,var(--bg1),var(--bg2),var(--bg3));background-size:300% 300%;animation:flow 24s ease infinite;display:flex;justify-content:center;padding:32px 16px}
+@keyframes flow{50%{background-position:100% 100%}}
+main{width:100%;max-width:860px;display:grid;gap:18px;align-content:start}
+.hero{text-align:center;padding:36px 0 8px}
+#hello{font-size:1.2rem;color:var(--dim)}
+#time{font-size:clamp(4rem,14vw,7.5rem);font-weight:800;line-height:1.05;letter-spacing:2px}
+#date{font-size:1.25rem;color:var(--acc)}
+form{display:flex;gap:8px}
+input,button{font:inherit;color:inherit}
+input{flex:1;background:var(--glass);border:1px solid var(--line);border-radius:16px;padding:14px 18px;outline:none;backdrop-filter:blur(14px)}
+input:focus{border-color:var(--acc)}
+input::placeholder{color:var(--dim)}
+button{cursor:pointer;background:var(--glass);border:1px solid var(--line);border-radius:14px;padding:10px 16px;transition:.2s}
+button:hover{background:rgba(255,255,255,.2);transform:translateY(-1px)}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+@media(max-width:700px){.grid{grid-template-columns:1fr}}
+.card{background:var(--glass);border:1px solid var(--line);border-radius:24px;padding:22px;backdrop-filter:blur(16px)}
+.card h2{font-size:1rem;color:var(--dim);font-weight:600;margin-bottom:14px}
+#pt{font-size:3.4rem;font-weight:800;text-align:center}
+.bar{height:6px;border-radius:9px;background:rgba(255,255,255,.15);margin:10px 0 16px;overflow:hidden}
+#pb{height:100%;width:0;background:var(--acc);transition:width 1s linear}
+.row{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+button.on{background:var(--acc);color:#431407;border-color:var(--acc)}
+ul{list-style:none;padding:0;display:grid;gap:8px;margin-top:12px;max-height:210px;overflow:auto}
+li{display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:12px;background:rgba(255,255,255,.07)}
+li.done span{text-decoration:line-through;opacity:.5}
+li span{flex:1;cursor:pointer}
+li button{padding:2px 9px;border-radius:9px}
+.links{display:flex;flex-wrap:wrap;gap:10px}
+.links a{color:inherit;text-decoration:none;background:rgba(255,255,255,.09);border:1px solid var(--line);padding:9px 16px;border-radius:14px;transition:.2s}
+.links a:hover{background:var(--acc);color:#431407}
+footer{text-align:center;color:var(--dim);font-size:.85rem;padding:8px}
+</style>
+</head>
+<body>
+<main>
+  <section class="hero">
+    <div id="hello"></div>
+    <div id="time">۰۰:۰۰</div>
+    <div id="date"></div>
+  </section>
+
+  <form id="sf" action="https://www.google.com/search" target="_self">
+    <input name="q" placeholder="هر چی دلت می‌خواد سرچ کن…" autocomplete="off" autofocus>
+    <button>برو</button>
+  </form>
+
+  <div class="grid">
+    <section class="card">
+      <h2>🍅 تمرکز (پومودورو)</h2>
+      <div id="pt">۲۵:۰۰</div>
+      <div class="bar"><div id="pb"></div></div>
+      <div class="row">
+        <button id="ps">شروع</button>
+        <button id="pr">ریست</button>
+        <button id="m25" class="on">۲۵ دقیقه</button>
+        <button id="m5">۵ دقیقه</button>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>✅ کارهای امروز</h2>
+      <form id="tf"><input id="ti" placeholder="یه کار بنویس و اینتر بزن" autocomplete="off"></form>
+      <ul id="tl"></ul>
+    </section>
+  </div>
+
+  <section class="card">
+    <h2>🔗 لینک‌های سریع</h2>
+    <div class="links" id="ll"></div>
+  </section>
+
+  <footer>هیچ چیزی از تو جایی ارسال نمی‌شه · همه‌چیز فقط تو مرورگر خودته 💛</footer>
+</main>
+
+<script>
+const $ = s => document.querySelector(s);
+const fa = n => Number(n).toLocaleString('fa-IR', {useGrouping: false});
+const p2 = n => fa(Math.floor(n / 10)) + fa(n % 10);
+const load = (k, d) => { try { return JSON.parse(localStorage.getItem(k)) ?? d; } catch { return d; } };
+const save = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} };
+
+/* ---- ساعت و تاریخ شمسی ---- */
+const dateFmt = new Intl.DateTimeFormat('fa-IR-u-ca-persian', {weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'});
+function tick() {
+  const d = new Date(), h = d.getHours();
+  $('#time').textContent = p2(h) + ':' + p2(d.getMinutes());
+  $('#date').textContent = dateFmt.format(d);
+  $('#hello').textContent = h < 5 ? 'شب‌بیدار! 🦉' : h < 12 ? 'صبح بخیر ☀️' : h < 17 ? 'ظهرت بخیر 🌤' : h < 21 ? 'عصر بخیر 🌇' : 'شب بخیر 🌙';
+}
+tick(); setInterval(tick, 1000);
+
+/* ---- پومودورو ---- */
+let total = 25 * 60, left = total, timer = null;
+function drawPomo() {
+  $('#pt').textContent = p2(Math.floor(left / 60)) + ':' + p2(left % 60);
+  $('#pb').style.width = ((total - left) / total * 100) + '%';
+  document.title = timer ? $('#pt').textContent + ' ✦ روز' : 'روز ✦ صفحه شروع';
+}
+function beep() {
+  try {
+    const c = new AudioContext(), o = c.createOscillator(), g = c.createGain();
+    o.connect(g); g.connect(c.destination); o.frequency.value = 660; g.gain.value = .15;
+    o.start(); o.stop(c.currentTime + .6);
+  } catch {}
+}
+function setMode(min) {
+  clearInterval(timer); timer = null; total = left = min * 60;
+  $('#ps').textContent = 'شروع';
+  $('#m25').classList.toggle('on', min === 25); $('#m5').classList.toggle('on', min === 5);
+  drawPomo();
+}
+$('#ps').onclick = () => {
+  if (timer) { clearInterval(timer); timer = null; $('#ps').textContent = 'ادامه'; return drawPomo(); }
+  $('#ps').textContent = 'توقف';
+  timer = setInterval(() => {
+    left--; drawPomo();
+    if (left <= 0) { beep(); setMode(total === 1500 ? 5 : 25); }
+  }, 1000);
+};
+$('#pr').onclick = () => setMode(total / 60);
+$('#m25').onclick = () => setMode(25);
+$('#m5').onclick = () => setMode(5);
+drawPomo();
+
+/* ---- کارهای امروز ---- */
+let todos = load('rooz.todos', []);
+function renderTodos() {
+  const ul = $('#tl'); ul.replaceChildren();
+  todos.forEach((t, i) => {
+    const li = document.createElement('li'), sp = document.createElement('span'), x = document.createElement('button');
+    li.className = t.d ? 'done' : ''; sp.textContent = t.t; x.textContent = '✕';
+    sp.onclick = () => { t.d = !t.d; save('rooz.todos', todos); renderTodos(); };
+    x.onclick = () => { todos.splice(i, 1); save('rooz.todos', todos); renderTodos(); };
+    li.append(sp, x); ul.append(li);
+  });
+}
+$('#tf').onsubmit = e => {
+  e.preventDefault();
+  const v = $('#ti').value.trim(); if (!v) return;
+  todos.unshift({t: v, d: false}); $('#ti').value = '';
+  save('rooz.todos', todos); renderTodos();
+};
+renderTodos();
+
+/* ---- لینک‌های سریع ---- */
+const defaults = [['گیتهاب', 'https://github.com'], ['یوتیوب', 'https://youtube.com'], ['ویکی‌پدیا', 'https://fa.wikipedia.org'], ['ترجمه', 'https://translate.google.com']];
+let links = load('rooz.links', defaults);
+function renderLinks() {
+  const box = $('#ll'); box.replaceChildren();
+  links.forEach(([n, u], i) => {
+    const a = document.createElement('a'); a.href = u; a.textContent = n;
+    a.oncontextmenu = e => { e.preventDefault(); if (confirm('«' + n + '» حذف بشه؟')) { links.splice(i, 1); save('rooz.links', links); renderLinks(); } };
+    box.append(a);
+  });
+  const add = document.createElement('button'); add.textContent = '+ افزودن';
+  add.onclick = () => {
+    const n = prompt('اسم لینک؟'); if (!n) return;
+    let u = prompt('آدرس؟ (مثلا github.com)'); if (!u) return;
+    if (!/^https?:\/\//.test(u)) u = 'https://' + u;
+    links.push([n, u]); save('rooz.links', links); renderLinks();
+  };
+  box.append(add);
+}
+renderLinks();
+</script>
+</body>
+</html>
